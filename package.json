@@ -1,0 +1,21 @@
+{
+  "name": "sw-router",
+  "version": "1.0.0",
+  "description": "A basic router for service workers",
+  "main": "index.js",
+  "scripts": {
+    "build-test": "(cd test && rollup --config --watch)"
+  },
+  "author": "Jake Archibald",
+  "license": "ISC",
+  "dependencies": {
+    "path-to-regexp": "^1.7.0",
+    "rollup-plugin-node-resolve": "^3.0.0"
+  },
+  "devDependencies": {
+    "rollup": "^0.45.2",
+    "rollup-plugin-babili": "^3.1.0",
+    "rollup-plugin-commonjs": "^8.1.0",
+    "rollup-watch": "^4.3.1"
+  }
+}
