@@ -1,6 +1,6 @@
-import ifOrigin from './handlers/iforigin';
-import ifPath from './handlers/ifpath';
-import ifMethod from './handlers/ifmethod';
+import isOrigin from './handlers/isorigin';
+import isPath from './handlers/ispath';
+import isMethod from './handlers/ismethod';
 import { requestHandler } from './handler-types';
 
 function fetchEventToData(fetchEvent) {
@@ -40,17 +40,17 @@ export default class Router {
     // Has a particular origin been specified?
     if (typeof items[0] == 'string' && typeof items[1] == 'string') {
       const [origin, path] = items;
-      if (origin != '*') router.add(ifOrigin(origin));
+      if (origin != '*') router.add(isOrigin(origin));
       items.shift();
     }
     // If not, assume same origin.
     else {
-      router.add(ifOrigin(location.origin));
+      router.add(isOrigin(location.origin));
     }
 
     // Has a particular path been specified?
     if (typeof items[0] == 'string') {
-      router.add(ifPath(items[0]));
+      router.add(isPath(items[0]));
       items.shift();
     }
 
@@ -74,6 +74,9 @@ export default class Router {
         const {type, handler} = item;
 
         switch (type) {
+          case 'finally':
+            await handler(fetchData);
+            break;
           case 'conditional':
             if (fetchData.error) continue;
             if (await handler(fetchData) == false) return fetchData.response;
@@ -102,8 +105,10 @@ export default class Router {
 
     return fetchData.response;
   }
-  handleFetchEvent(fetchEvent) {
-    fetchEvent.respondWith(this.handle(fetchEvent).then(r => r || fetch(fetchEvent.request)));
+  addFetchListener() {
+    self.addEventListener('fetch', event => {
+      event.respondWith(this.handle(event).then(r => r || fetch(event.request)));
+    });
   }
 }
 
@@ -111,7 +116,7 @@ for (const method of ['GET', 'POST', 'PUT', 'DELETE']) {
   Object.defineProperty(Router.prototype, method.toLowerCase(), {
     value(...items) {
       const router = new Router();
-      router.add(ifMethod(method));
+      router.add(isMethod(method));
       router.all(...items);
       this.add(router);
     }

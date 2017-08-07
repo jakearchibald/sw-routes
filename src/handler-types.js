@@ -12,12 +12,28 @@ export function responseHandler(handler) {
   };
 }
 
+export function finallyHandler(handler) {
+  return {
+    handler,
+    type: 'finally'
+  };
+}
+
 export function responseWaitUntilHandler(waitUntilHandler) {
   return {
     handler(fetchDetails) {
       fetchDetails.waitUntil(waitUntilHandler(fetchDetails));
     },
     type: 'response'
+  };
+}
+
+export function waitUntilHandler(waitUntilHandler) {
+  return {
+    handler(fetchDetails) {
+      fetchDetails.waitUntil(waitUntilHandler(fetchDetails));
+    },
+    type: 'finally'
   };
 }
 

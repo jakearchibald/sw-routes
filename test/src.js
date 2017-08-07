@@ -1,5 +1,6 @@
 import Router from './../src';
 import staleWhileRevalidate from '../src/handlers/stalewhilerevalidate';
+import isNavigation from '../src/handlers/isnavigation';
 
 addEventListener('install', () => {
   skipWaiting();
@@ -7,10 +8,10 @@ addEventListener('install', () => {
 
 const router = new Router();
 
-router.get('/sw-router/test/:type/', ({ params }) => {
+router.get('/sw-router/test/:type/', isNavigation(), ({ params }) => {
   return new Response(JSON.stringify(params));
 });
 
 router.add(staleWhileRevalidate('dynamic'));
 
-addEventListener('fetch', event => router.handleFetchEvent(event));
+router.addFetchListener();
