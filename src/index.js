@@ -1,5 +1,4 @@
-import isOrigin from './handlers/isorigin';
-import isPath from './handlers/ispath';
+import isUrl from './handlers/isurl';
 import isMethod from './handlers/ismethod';
 import { requestHandler } from './handler-types';
 
@@ -38,19 +37,8 @@ export default class Router {
     const router = new Router();
 
     // Has a particular origin been specified?
-    if (typeof items[0] == 'string' && typeof items[1] == 'string') {
-      const [origin, path] = items;
-      if (origin != '*') router.add(isOrigin(origin));
-      items.shift();
-    }
-    // If not, assume same origin.
-    else {
-      router.add(isOrigin(location.origin));
-    }
-
-    // Has a particular path been specified?
     if (typeof items[0] == 'string') {
-      router.add(isPath(items[0]));
+      router.add(isUrl(items[0]));
       items.shift();
     }
 
