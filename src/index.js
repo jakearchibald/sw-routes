@@ -1,5 +1,5 @@
-import isUrl from './handlers/isurl';
-import isMethod from './handlers/ismethod';
+import ifUrl from './handlers/ifurl';
+import ifMethod from './handlers/ifmethod';
 import { requestHandler } from './handler-types';
 
 function fetchEventToData(fetchEvent) {
@@ -38,7 +38,7 @@ export default class Router {
 
     // Has a particular origin been specified?
     if (typeof items[0] == 'string') {
-      router.add(isUrl(items[0]));
+      router.add(ifUrl(items[0]));
       items.shift();
     }
 
@@ -104,7 +104,7 @@ for (const method of ['GET', 'POST', 'PUT', 'DELETE']) {
   Object.defineProperty(Router.prototype, method.toLowerCase(), {
     value(...items) {
       const router = new Router();
-      router.add(isMethod(method));
+      router.add(ifMethod(method));
       router.all(...items);
       this.add(router);
     }

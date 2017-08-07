@@ -2,7 +2,7 @@ import pathToRegexp from 'path-to-regexp';
 
 import { conditionalHandler } from '../handler-types.js';
 
-export default function isUrl(toMatch) {
+export default function ifUrl(toMatch) {
   const keys = [];
   const re = pathToRegexp(toMatch, keys, {
     strict: true,
