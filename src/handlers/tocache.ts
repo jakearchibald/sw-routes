@@ -1,6 +1,11 @@
-import { responseWaitUntilHandler } from '../handler-types.js';
+import { responseWaitUntilHandler, VoidHandlerDefinition } from '../handler-types';
 
-export default function toCache(cacheName) {
+/**
+ * Add response to the cache (unless it came from the cache).
+ *
+ * @param cacheName
+ */
+export default function toCache(cacheName: string) {
   return responseWaitUntilHandler(async fetchDetails => {
     if (fetchDetails.response._fromCache || !fetchDetails.response.ok) return;
 
