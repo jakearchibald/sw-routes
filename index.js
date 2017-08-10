@@ -1,1 +1,2 @@
-// TODO: export everything
+import Router from './lib/index.js';
+export default Router;

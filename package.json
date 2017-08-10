@@ -4,8 +4,8 @@
   "description": "A basic router for service workers",
   "main": "index.js",
   "scripts": {
-    "build-test": "(cd test && rollup --config --watch)",
-    "build": "tsc"
+    "build-test": "(cd test && rollup --config)",
+    "build": "del lib dist && tsc && rollup --config"
   },
   "author": "Jake Archibald",
   "license": "ISC",
@@ -14,6 +14,7 @@
     "rollup-plugin-node-resolve": "^3.0.0"
   },
   "devDependencies": {
+    "del-cli": "^1.1.0",
     "rollup": "^0.45.2",
     "rollup-plugin-babili": "^3.1.0",
     "rollup-plugin-commonjs": "^8.1.0",

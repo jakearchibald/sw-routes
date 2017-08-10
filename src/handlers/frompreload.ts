@@ -3,6 +3,6 @@ import { requestHandler, HandlerDefinition } from '../handler-types';
 /**
  * Use preloaded response as the response.
  */
-export default function fromNetwork() {
+export default function fromPreload() {
   return requestHandler(({ preloadResponse }) => preloadResponse);
 }

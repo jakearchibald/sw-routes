@@ -1,4 +1,5 @@
 import { responseWaitUntilHandler, VoidHandlerDefinition } from '../handler-types';
+import { originallyFromCache } from './fromcache';
 
 /**
  * Add response to the cache, unless it came from the cache, in which case fetch an updated version and cache it.
@@ -10,7 +11,7 @@ export default function updateCache(cacheName: string) {
     const responseClone = response.clone();
     const cache = await caches.open(cacheName);
 
-    if (response._fromCache) {
+    if (originallyFromCache.get(response)) {
       // Cache a fresh copy
       await cache.add(request);
       return;

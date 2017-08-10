@@ -1,4 +1,5 @@
 import { responseWaitUntilHandler, VoidHandlerDefinition } from '../handler-types';
+import { originallyFromCache } from './fromcache';
 
 /**
  * Add response to the cache (unless it came from the cache).
@@ -6,11 +7,11 @@ import { responseWaitUntilHandler, VoidHandlerDefinition } from '../handler-type
  * @param cacheName
  */
 export default function toCache(cacheName: string) {
-  return responseWaitUntilHandler(async fetchDetails => {
-    if (fetchDetails.response._fromCache || !fetchDetails.response.ok) return;
+  return responseWaitUntilHandler(async ({response, request}) => {
+    if (originallyFromCache.get(response) || !response.ok) return;
 
-    const responseClone = fetchDetails.response.clone();
+    const responseClone = response.clone();
     const cache = await caches.open(cacheName);
-    await cache.put(fetchDetails.request, responseClone);
+    await cache.put(request, responseClone);
   });
 }

@@ -1,4 +1,4 @@
-import * as pathToRegexp from 'path-to-regexp';
+import pathToRegexp from 'path-to-regexp';
 import { conditionalHandler, ConditionalHandlerDefinition } from '../handler-types';
 import { Key } from "path-to-regexp";
 

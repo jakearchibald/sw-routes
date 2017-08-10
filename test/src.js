@@ -1,4 +1,6 @@
-import Router from './../src';
+import Router from './../index.js';
+import { ifNavigation } from '../handlers';
+import fromNetwork from '../lib/handlers/fromnetwork';
 
 addEventListener('install', () => {
   skipWaiting();
@@ -12,6 +14,8 @@ router.get('/sw-router/test/:type/', ({ params }) => {
 
 router.get('https://example.com/foo', () => {
   return new Response('example');
-})
+});
+
+router.get('/sw-router/whatever/', ifNavigation(), fromNetwork());
 
 router.addFetchListener();

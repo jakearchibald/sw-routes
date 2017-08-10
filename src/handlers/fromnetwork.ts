@@ -11,7 +11,7 @@ export default function fromNetwork({
   timeout = 0
 }={}) {
   return requestHandler(({ request }) => {
-    const networkFetch = fetch(request).catch(() => undefined);
+    const networkFetch = <Promise<Response>>fetch(request).catch(() => null);
 
     if (timeout) return Promise.race([
       networkFetch,

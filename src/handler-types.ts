@@ -1,27 +1,25 @@
-/**
- * Handler that returns a (promise for a) response, or null.
- */
-export type PotentialResponseHandler = (fetchDetails: any) => Promise<Response | void> | Response | void;
-/**
- * Handler that returns nothing.
- */
-export type VoidHandler = (fetchDetails: any) => Promise<void> | void;
-export type BooleanHandler = (fetchDetails: any) => Promise<boolean> | boolean;
+import { FetchData } from '.';
+
+export type PotentialResponseHandler = (fetchData: FetchData) => Promise<Response | void> | Response | void;
+export type VoidHandler = (fetchData: FetchData) => Promise<void> | void;
+export type BooleanHandler = (fetchData: FetchData) => Promise<boolean> | boolean;
 
 export interface HandlerDefinition {
-  type: 'request' | 'response' | 'error',
-  handler: PotentialResponseHandler
+  type: 'request' | 'response' | 'error';
+  handler: PotentialResponseHandler;
 }
 
 export interface VoidHandlerDefinition {
-  type: 'finally' | 'response',
-  handler: VoidHandler
+  type: 'finally' | 'response';
+  handler: VoidHandler;
 }
 
 export interface ConditionalHandlerDefinition {
-  type: 'conditional',
-  handler: BooleanHandler
+  type: 'conditional';
+  handler: BooleanHandler;
 }
+
+export type AnyHandlerDefinition = HandlerDefinition | VoidHandlerDefinition | ConditionalHandlerDefinition;
 
 /**
  * Handler called if no previous handler has provided a response.
@@ -60,8 +58,8 @@ export function finallyHandler(handler: VoidHandler): VoidHandlerDefinition {
  */
 export function responseWaitUntilHandler(handler: VoidHandler): VoidHandlerDefinition {
   return {
-    handler(fetchDetails: any): void {
-      fetchDetails.waitUntil(handler(fetchDetails));
+    handler(fetchData: any): void {
+      fetchData.waitUntil(handler(fetchData));
     },
     type: 'response'
   };
@@ -74,8 +72,8 @@ export function responseWaitUntilHandler(handler: VoidHandler): VoidHandlerDefin
  */
 export function waitUntilHandler(handler: VoidHandler): VoidHandlerDefinition {
   return {
-    handler(fetchDetails: any): void {
-      fetchDetails.waitUntil(handler(fetchDetails));
+    handler(fetchData: any): void {
+      fetchData.waitUntil(handler(fetchData));
     },
     type: 'finally'
   };
