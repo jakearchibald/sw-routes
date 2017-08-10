@@ -10,15 +10,15 @@ export const originallyFromCache:WeakMap<Response, boolean> = new WeakMap();
  *
  * @param opts Options passed to caches.match()
  */
-function fromCache(opts?: CacheQueryOptions);
+function fromCache(opts?: CacheQueryOptions): HandlerDefinition;
 /**
  * Get a specific response from the cache.
  *
  * @param request Look for a match to this in the cache.
  * @param opts Options passed to caches.match().
  */
-function fromCache(request: Request | string, opts?: CacheQueryOptions);
-function fromCache(requestOrOpts?: Request | string | CacheQueryOptions, opts?: CacheQueryOptions) {
+function fromCache(request: Request | string, opts?: CacheQueryOptions): HandlerDefinition
+function fromCache(requestOrOpts?: Request | string | CacheQueryOptions, opts?: CacheQueryOptions): HandlerDefinition {
   let providedRequest: Request | string;
 
   if (requestOrOpts instanceof Request || typeof requestOrOpts == 'string') {

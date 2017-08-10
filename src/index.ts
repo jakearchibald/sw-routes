@@ -9,7 +9,7 @@ import {
 export class FetchData {
   request: Request;
   preloadResponse: Promise<Response | void>;
-  clientId: string;
+  clientId: string | null;
   /**
    * Parsed request url.
    */
@@ -17,11 +17,11 @@ export class FetchData {
   /**
    * Error thrown by previous handler.
    */
-  error: Error;
+  error: Error | null;
   /**
    * Response provided by previous handler.
    */
-  response: Response;
+  response: Response | null;
   /**
    * Params added by ifUrl.
    */
@@ -32,7 +32,7 @@ export class FetchData {
   /**
    * Inform the service worker about additional work.
    */
-  waitUntil: (p: Promise<void>) => void;
+  waitUntil: (p: Promise<void> | void) => void;
 
   // Allow additional properties
   [x: string]: any;
@@ -44,6 +44,14 @@ export class FetchData {
     this.url = new URL(event.request.url);
     this.waitUntil = event.waitUntil.bind(event);
   }
+}
+
+export interface FetchDataWithResponse extends FetchData {
+  response: Response;
+}
+
+export interface FetchDataWithError extends FetchData {
+  error: Error;
 }
 
 class Router {
@@ -121,11 +129,11 @@ class Router {
             break;
           case 'response':
             if (fetchData.error || !fetchData.response) continue;
-            fetchData.response = (await item.handler(fetchData)) || fetchData.response;
+            fetchData.response = (await item.handler(<FetchDataWithResponse>fetchData)) || fetchData.response;
             break;
           case 'error':
             if (!fetchData.error) continue;
-            fetchData.response = (await item.handler(fetchData)) || fetchData.response;
+            fetchData.response = (await item.handler(<FetchDataWithError>fetchData)) || fetchData.response;
             fetchData.error = null;
             break;
         }
@@ -208,14 +216,23 @@ interface Router {
   delete(...items: AnyRouteParam[]): void;
 }
 
-for (const method of ['GET', 'POST', 'PUT', 'DELETE']) {
-  Router.prototype[method.toLowerCase()] = function (...items) {
+function createMethodRoute(method: string) {
+  function methodHandler(this: Router, urlPattern: string, ...items: AnyRouteParam[]): void;
+  function methodHandler(this: Router, ...items: AnyRouteParam[]): void;
+  function methodHandler(this: Router, firstItem: (AnyRouteParam | string), ...items: AnyRouteParam[]): void {
     const router = new Router();
     router.add(ifMethod(method));
     router.all(...items);
     this.add(router);
-  };
+  }
+
+  return methodHandler;
 }
+
+Router.prototype.get = createMethodRoute('GET');
+Router.prototype.put = createMethodRoute('PUT');
+Router.prototype.post = createMethodRoute('POST');
+Router.prototype.delete = createMethodRoute('DELETE');
 
 export default Router;
 export type AnyRouteParam = AnyHandlerDefinition | Router | PotentialResponseHandler;

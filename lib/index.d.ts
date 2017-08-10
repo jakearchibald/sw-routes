@@ -2,7 +2,7 @@ import { AnyHandlerDefinition, PotentialResponseHandler } from './handler-types'
 export declare class FetchData {
     request: Request;
     preloadResponse: Promise<Response | void>;
-    clientId: string;
+    clientId: string | null;
     /**
      * Parsed request url.
      */
@@ -10,11 +10,11 @@ export declare class FetchData {
     /**
      * Error thrown by previous handler.
      */
-    error: Error;
+    error: Error | null;
     /**
      * Response provided by previous handler.
      */
-    response: Response;
+    response: Response | null;
     /**
      * Params added by ifUrl.
      */
@@ -25,9 +25,15 @@ export declare class FetchData {
     /**
      * Inform the service worker about additional work.
      */
-    waitUntil: (p: Promise<void>) => void;
+    waitUntil: (p: Promise<void> | void) => void;
     [x: string]: any;
     constructor(event: FetchEvent);
+}
+export interface FetchDataWithResponse extends FetchData {
+    response: Response;
+}
+export interface FetchDataWithError extends FetchData {
+    error: Error;
 }
 declare class Router {
     private _items;
@@ -55,7 +61,7 @@ declare class Router {
      *
      * This allows you to get a result from this router without having it take over your whole fetch event.
      */
-    handle(fetchData: (FetchEvent | FetchData)): Promise<Response>;
+    handle(fetchData: (FetchEvent | FetchData)): Promise<Response | null>;
     /**
      * Add a fetch listener and use this router to generate the response.
      */
