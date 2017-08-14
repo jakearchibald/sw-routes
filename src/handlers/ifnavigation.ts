@@ -1,4 +1,4 @@
-import { conditionalHandler, ConditionalHandlerDefinition } from '../handler-types';
+import { conditionalHandler, ConditionalHandler } from '../handler-types';
 
 /**
  * Continue with additional handlers if this is a navigation request.

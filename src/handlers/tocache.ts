@@ -1,4 +1,4 @@
-import { responseWaitUntilHandler, ResponseHandlerDefinition } from '../handler-types';
+import { responseWaitUntilHandler, ResponseHandler } from '../handler-types';
 import { originallyFromCache } from './fromcache';
 
 /**

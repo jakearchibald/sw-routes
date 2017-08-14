@@ -1,4 +1,4 @@
-import { requestHandler, HandlerDefinition } from '../handler-types';
+import { requestHandler, RequestHandler } from '../handler-types';
 
 /**
  * Use preloaded response as the response.

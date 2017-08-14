@@ -1,45 +1,48 @@
 import { FetchData, FetchDataWithResponse, FetchDataWithError } from '.';
 
-export type PotentialResponseHandler = (fetchData: FetchData) => Promise<Response | void> | Response | void;
-export type PotentialResponseHandlerWithResponse = (fetchData: FetchDataWithResponse) => Promise<Response | void> | Response | void;
-export type PotentialResponseHandlerWithError = (fetchData: FetchDataWithError) => Promise<Response | void> | Response | void;
-export type VoidHandler = (fetchData: FetchData) => Promise<void> | void;
-export type VoidHandlerWithResponse = (fetchData: FetchDataWithResponse) => Promise<void> | void;
-export type BooleanHandler = (fetchData: FetchData) => Promise<boolean> | boolean;
+export type ResolveTo<T> = Promise<T> | T;
+export type CanResolveTo<T> = ResolveTo<T | void | null>;
 
-export interface HandlerDefinition {
+export type ResponseProvider = (fetchData: FetchData) => CanResolveTo<Response>;
+export type ResponseReplacer = (fetchData: FetchDataWithResponse) => CanResolveTo<Response>;
+export type ErrorHandlerFunc = (fetchData: FetchDataWithError) => CanResolveTo<Response>;
+export type VoidFunc = (fetchData: FetchData) => ResolveTo<void>;
+export type VoidFuncWithResponse = (fetchData: FetchDataWithResponse) => ResolveTo<void>;
+export type ConditionalHandlerFunc = (fetchData: FetchData) => Promise<boolean> | boolean;
+
+export interface RequestHandler {
   type: 'request';
-  handler: PotentialResponseHandler;
+  func: ResponseProvider;
 }
 
-export interface ResponseHandlerDefinition {
+export interface ResponseHandler {
   type: 'response';
-  handler: PotentialResponseHandlerWithResponse;
+  func: ResponseReplacer;
 }
 
-export interface ErrorHandlerDefinition {
+export interface ErrorHandler {
   type: 'error';
-  handler: PotentialResponseHandlerWithError;
+  func: ErrorHandlerFunc;
 }
 
-export interface VoidHandlerDefinition {
-  type: 'finally';
-  handler: VoidHandler;
+export interface AnyHandler {
+  type: 'any';
+  func: ResponseProvider;
 }
 
-export interface ConditionalHandlerDefinition {
+export interface ConditionalHandler {
   type: 'conditional';
-  handler: BooleanHandler;
+  func: ConditionalHandlerFunc;
 }
 
-export type AnyHandlerDefinition = HandlerDefinition | ResponseHandlerDefinition | ErrorHandlerDefinition | VoidHandlerDefinition | ConditionalHandlerDefinition;
+export type AllHandlers = RequestHandler | ResponseHandler | ErrorHandler | AnyHandler | ConditionalHandler;
 
 /**
  * Handler called if no previous handler has provided a response.
  */
-export function requestHandler(handler: PotentialResponseHandler): HandlerDefinition {
+export function requestHandler(func: ResponseProvider): RequestHandler {
   return {
-    handler,
+    func,
     type: 'request'
   };
 }
@@ -47,9 +50,9 @@ export function requestHandler(handler: PotentialResponseHandler): HandlerDefini
 /**
  * Handler called if a previous handler has provided a response.
  */
-export function responseHandler(handler: PotentialResponseHandlerWithResponse): ResponseHandlerDefinition {
+export function responseHandler(func: ResponseReplacer): ResponseHandler {
   return {
-    handler,
+    func,
     type: 'response'
   };
 }
@@ -57,22 +60,22 @@ export function responseHandler(handler: PotentialResponseHandlerWithResponse): 
 /**
  * Handler always called.
  */
-export function finallyHandler(handler: VoidHandler): VoidHandlerDefinition {
+export function anyHandler(func: ResponseProvider): AnyHandler {
   return {
-    handler,
-    type: 'finally'
+    func,
+    type: 'any'
   };
 }
 
 /**
  * Handler called if a previous handler has provided a response.
  *
- * @param handler Returned promise passed to fetchEvent.waitUntil.
+ * @param waitUntilFunc Returned promise passed to fetchEvent.waitUntil.
  */
-export function responseWaitUntilHandler(handler: VoidHandlerWithResponse): ResponseHandlerDefinition {
+export function responseWaitUntilHandler(waitUntilFunc: VoidFuncWithResponse): ResponseHandler {
   return {
-    handler(fetchData: FetchDataWithResponse): void {
-      fetchData.waitUntil(handler(fetchData));
+    func(fetchData: FetchDataWithResponse): void {
+      fetchData.waitUntil(waitUntilFunc(fetchData));
     },
     type: 'response'
   };
@@ -81,23 +84,23 @@ export function responseWaitUntilHandler(handler: VoidHandlerWithResponse): Resp
 /**
  * Handler always called.
  *
- * @param handler Returned promise passed to fetchEvent.waitUntil.
+ * @param waitUntilFunc Returned promise passed to fetchEvent.waitUntil.
  */
-export function waitUntilHandler(handler: VoidHandler): VoidHandlerDefinition {
+export function waitUntilHandler(waitUntilFunc: VoidFunc): AnyHandler {
   return {
-    handler(fetchData: FetchData): void {
-      fetchData.waitUntil(handler(fetchData));
+    func(fetchData: FetchData): void {
+      fetchData.waitUntil(waitUntilFunc(fetchData));
     },
-    type: 'finally'
+    type: 'any'
   };
 }
 
 /**
  * Handler called if previous handler threw/rejected. The error is cleared unless this handler also throws.
  */
-export function errorHandler(handler: PotentialResponseHandlerWithError): ErrorHandlerDefinition {
+export function errorHandler(func: ResponseProvider): ErrorHandler {
   return {
-    handler,
+    func,
     type: 'error'
   };
 }
@@ -105,11 +108,11 @@ export function errorHandler(handler: PotentialResponseHandlerWithError): ErrorH
 /**
  * Handler called unless previous handler threw/rejected.
  *
- * @param handler If the handler returns false, subsequent handlers in this sub-router will be skipped.
+ * @param func If the handler returns false, subsequent handlers in this sub-router will be skipped.
  */
-export function conditionalHandler(handler: BooleanHandler): ConditionalHandlerDefinition {
+export function conditionalHandler(func: ConditionalHandlerFunc): ConditionalHandler {
   return {
-    handler,
+    func,
     type: 'conditional'
   };
 }

@@ -1,5 +1,5 @@
 {
-  "name": "sw-router",
+  "name": "sw-routes",
   "version": "1.0.0",
   "description": "A basic router for service workers",
   "main": "index.js",

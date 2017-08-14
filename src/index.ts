@@ -2,8 +2,8 @@ import ifUrl from './handlers/ifurl';
 import ifMethod from './handlers/ifmethod';
 import {
   requestHandler,
-  AnyHandlerDefinition,
-  PotentialResponseHandler
+  AllHandlers,
+  ResponseProvider
 } from './handler-types';
 
 export class FetchData {
@@ -55,7 +55,7 @@ export interface FetchDataWithError extends FetchData {
 }
 
 class Router {
-  private _items: (AnyHandlerDefinition | Router)[] = [];
+  private _handlers: (AllHandlers | Router)[] = [];
 
   /**
    * Add items to this router.
@@ -63,7 +63,7 @@ class Router {
    * @param items Request/response/conditional/error handlers, or sub-routers.
    */
   add(...items: AnyRouteParam[]) {
-    this._items.push(...items.map(item => {
+    this._handlers.push(...items.map(item => {
       if (typeof item == 'function') return requestHandler(item);
       return item;
     }));
@@ -106,34 +106,35 @@ class Router {
       fetchData = new FetchData(fetchData);
     }
 
-    for (const item of this._items) {
+    for (const handler of this._handlers) {
       try {
         // Handle nested routers
-        if (item instanceof Router) {
-          fetchData.response = (await item.handle(fetchData)) || fetchData.response;
+        if (handler instanceof Router) {
+          fetchData.response = (await handler.handle(fetchData)) || fetchData.response;
           fetchData.error = null;
           continue;
         }
 
-        switch (item.type) {
-          case 'finally':
-            await item.handler(fetchData);
+        switch (handler.type) {
+          case 'any':
+            if (fetchData.error) continue;
+            fetchData.response = await handler.func(fetchData) || null;
             break;
           case 'conditional':
             if (fetchData.error) continue;
-            if (await item.handler(fetchData) == false) return fetchData.response;
+            if (await handler.func(fetchData) == false) return fetchData.response;
             break;
           case 'request':
             if (fetchData.response || fetchData.error) continue;
-            fetchData.response = await item.handler(fetchData) || null;
+            fetchData.response = await handler.func(fetchData) || null;
             break;
           case 'response':
             if (fetchData.error || !fetchData.response) continue;
-            fetchData.response = (await item.handler(<FetchDataWithResponse>fetchData)) || fetchData.response;
+            fetchData.response = (await handler.func(<FetchDataWithResponse>fetchData)) || fetchData.response;
             break;
           case 'error':
             if (!fetchData.error) continue;
-            fetchData.response = (await item.handler(<FetchDataWithError>fetchData)) || fetchData.response;
+            fetchData.response = (await handler.func(<FetchDataWithError>fetchData)) || fetchData.response;
             fetchData.error = null;
             break;
         }
@@ -235,4 +236,4 @@ Router.prototype.post = createMethodRoute('POST');
 Router.prototype.delete = createMethodRoute('DELETE');
 
 export default Router;
-export type AnyRouteParam = AnyHandlerDefinition | Router | PotentialResponseHandler;
+export type AnyRouteParam = AllHandlers | Router | ResponseProvider;

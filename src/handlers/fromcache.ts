@@ -1,4 +1,4 @@
-import { requestHandler, HandlerDefinition } from '../handler-types';
+import { requestHandler, RequestHandler } from '../handler-types';
 
 /**
  * Lookup if a response came from a cache (eg, to avoid recaching)
@@ -10,15 +10,15 @@ export const originallyFromCache:WeakMap<Response, boolean> = new WeakMap();
  *
  * @param opts Options passed to caches.match()
  */
-function fromCache(opts?: CacheQueryOptions): HandlerDefinition;
+function fromCache(opts?: CacheQueryOptions): RequestHandler;
 /**
  * Get a specific response from the cache.
  *
  * @param request Look for a match to this in the cache.
  * @param opts Options passed to caches.match().
  */
-function fromCache(request: Request | string, opts?: CacheQueryOptions): HandlerDefinition
-function fromCache(requestOrOpts?: Request | string | CacheQueryOptions, opts?: CacheQueryOptions): HandlerDefinition {
+function fromCache(request: Request | string, opts?: CacheQueryOptions): RequestHandler
+function fromCache(requestOrOpts?: Request | string | CacheQueryOptions, opts?: CacheQueryOptions): RequestHandler {
   let providedRequest: Request | string;
 
   if (requestOrOpts instanceof Request || typeof requestOrOpts == 'string') {

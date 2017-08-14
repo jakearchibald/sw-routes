@@ -1,4 +1,4 @@
-import { requestHandler, HandlerDefinition } from '../handler-types';
+import { requestHandler, RequestHandler } from '../handler-types';
 import { wait } from '../utils';
 
 /**
@@ -11,7 +11,7 @@ export default function fromNetwork({
   timeout = 0
 }={}) {
   return requestHandler(({ request }) => {
-    const networkFetch = <Promise<Response>>fetch(request).catch(() => null);
+    const networkFetch = <Promise<Response | null>>fetch(request).catch(() => null);
 
     if (timeout) return Promise.race([
       networkFetch,
