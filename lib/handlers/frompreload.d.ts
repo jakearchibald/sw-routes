@@ -1,5 +1,5 @@
-import { HandlerDefinition } from '../handler-types';
+import { RequestHandler } from '../handler-types';
 /**
  * Use preloaded response as the response.
  */
-export default function fromPreload(): HandlerDefinition;
+export default function fromPreload(): RequestHandler;

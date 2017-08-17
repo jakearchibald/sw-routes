@@ -1,5 +1,5 @@
-import { ConditionalHandlerDefinition } from '../handler-types';
+import { ConditionalHandler } from '../handler-types';
 /**
  * Continue with additional handlers if this is a navigation request.
  */
-export default function ifNavigation(): ConditionalHandlerDefinition;
+export default function ifNavigation(): ConditionalHandler;

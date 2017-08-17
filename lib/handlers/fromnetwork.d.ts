@@ -1,4 +1,4 @@
-import { HandlerDefinition } from '../handler-types';
+import { RequestHandler } from '../handler-types';
 /**
  * Fetch response from network.
  *
@@ -7,4 +7,4 @@ import { HandlerDefinition } from '../handler-types';
  */
 export default function fromNetwork({timeout}?: {
     timeout?: number;
-}): HandlerDefinition;
+}): RequestHandler;

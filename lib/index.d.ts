@@ -1,4 +1,4 @@
-import { AnyHandlerDefinition, PotentialResponseHandler } from './handler-types';
+import { AllHandlers, ResponseProvider } from './handler-types';
 export declare class FetchData {
     request: Request;
     preloadResponse: Promise<Response | void>;
@@ -27,7 +27,7 @@ export declare class FetchData {
      */
     waitUntil: (p: Promise<void> | void) => void;
     [x: string]: any;
-    constructor(event: FetchEvent);
+    constructor(data: FetchEvent | FetchData);
 }
 export interface FetchDataWithResponse extends FetchData {
     response: Response;
@@ -36,7 +36,7 @@ export interface FetchDataWithError extends FetchData {
     error: Error;
 }
 declare class Router {
-    private _items;
+    private _handlers;
     /**
      * Add items to this router.
      *
@@ -122,4 +122,4 @@ interface Router {
     delete(...items: AnyRouteParam[]): void;
 }
 export default Router;
-export declare type AnyRouteParam = AnyHandlerDefinition | Router | PotentialResponseHandler;
+export declare type AnyRouteParam = AllHandlers | Router | ResponseProvider;
