@@ -1,21 +1,14 @@
-import Router from './../index.js';
-import { ifNavigation } from '../handlers';
-import fromNetwork from '../lib/handlers/fromnetwork';
+import Router from '../';
+import { ifNavigation, race, fromNetwork, sequence, toCache, fromCache, wait } from '../handlers';
 
-addEventListener('install', () => {
-  skipWaiting();
-});
+addEventListener('install', () => skipWaiting());
 
 const router = new Router();
-
-router.get('/sw-router/test/:type/', ({ params }) => {
-  return new Response(JSON.stringify(params));
-});
-
-router.get('https://example.com/foo', () => {
-  return new Response('example');
-});
-
-router.get('/sw-router/whatever/', ifNavigation(), fromNetwork());
-
 router.addFetchListener();
+
+router.get(ifNavigation(),
+  race(
+    sequence(wait(3000), fromNetwork(), toCache('nav'), () => console.log('from network')),
+    sequence(fromCache(), wait(2000), () => console.log('from cache'))
+  )
+);

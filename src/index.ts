@@ -37,12 +37,25 @@ export class FetchData {
   // Allow additional properties
   [x: string]: any;
 
-  constructor(event: FetchEvent) {
-    this.request = event.request;
-    this.preloadResponse = event.preloadResponse;
-    this.clientId = event.clientId;
-    this.url = new URL(event.request.url);
-    this.waitUntil = event.waitUntil.bind(event);
+  constructor(data: FetchEvent | FetchData) {
+    this.request = data.request;
+    this.preloadResponse = data.preloadResponse;
+    this.clientId = data.clientId;
+
+    if (data instanceof FetchData) {
+      this.url = data.url;
+      this.params = data.params;
+      this.waitUntil = data.waitUntil;
+
+      // Copy additional properties
+      for (const [key, val] of Object.entries(data)) {
+        if (!(key in this)) this[key] = val;
+      }
+    }
+    else {
+      this.url = new URL(data.request.url);
+      this.waitUntil = data.waitUntil.bind(data);
+    }
   }
 }
 
@@ -118,7 +131,7 @@ class Router {
         switch (handler.type) {
           case 'any':
             if (fetchData.error) continue;
-            fetchData.response = await handler.func(fetchData) || null;
+            fetchData.response = await handler.func(fetchData) || fetchData.response;
             break;
           case 'conditional':
             if (fetchData.error) continue;
