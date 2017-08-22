@@ -22,7 +22,7 @@ const router = new Router();
 router.addFetchListener();
 ```
 
-If you don't want sw-routes to write the fetch listener for you, see [`router.handle`](#router-handle).
+If you don't want sw-routes to write the fetch listener for you, see [`router.handle`](#routerhandle).
 
 ### Adding routes
 
@@ -36,7 +36,7 @@ router.get(...handlers);
 
 `.get` only handles `GET` requests. There is also `.post`, `.put`, `.delete` for other HTTP methods, and `.all` for all methods.
 
-Paths can contain [regex & patterns](handlers.md#ifUrl).
+Paths can contain [regex & patterns](handlers.md#ifurl).
 
 In their simplest form, handlers are just functions:
 
@@ -55,7 +55,7 @@ router.get('/whatever/', async fetchData => {
 
 Functions are "request handlers", and are called in sequence until one provides a response, or a promise for a response (as above).
 
-For details on `fetchData`, see the [API docs](#FetchData).
+For details on `fetchData`, see the [API docs](#fetchdata).
 
 ### Handlers
 
@@ -75,16 +75,16 @@ router.get(fromNetwork(), fromCache());
 
 Here are all the handlers sw-routes provides:
 
-* [`fromCache`](handlers.md#fromCache) – Try to get a response from a cache. It can be a specific item, or one that matches the current request.
-* [`fromNetwork`](handlers.md#fromNetwork) – Try to get a response from the network.
-* [`fromPreload`](handlers.md#fromPreload) – Use any [preloaded response](https://developers.google.com/web/updates/2017/02/navigation-preload).
-* [`ifMethod`](handlers.md#ifMethod) – Only run subsequent handlers if the request uses a particular HTTP method. This is what `.get` etc use internally.
-* [`ifNavigation`](handlers.md#ifNavigation) –  Only run subsequent handlers if the request is a page navigation.
-* [`ifUrl`](handlers.md#ifUrl) – Only run subsequent handlers if the request matches a particular URL. If you pass a string as the first argument to `.get` etc, it's passed to this.
+* [`fromCache`](handlers.md#fromcache) – Try to get a response from a cache. It can be a specific item, or one that matches the current request.
+* [`fromNetwork`](handlers.md#fromnetwork) – Try to get a response from the network.
+* [`fromPreload`](handlers.md#frompreload) – Use any [preloaded response](https://developers.google.com/web/updates/2017/02/navigation-preload).
+* [`ifMethod`](handlers.md#ifmethod) – Only run subsequent handlers if the request uses a particular HTTP method. This is what `.get` etc use internally.
+* [`ifNavigation`](handlers.md#ifnavigation) –  Only run subsequent handlers if the request is a page navigation.
+* [`ifUrl`](handlers.md#ifurl) – Only run subsequent handlers if the request matches a particular URL. If you pass a string as the first argument to `.get` etc, it's passed to this.
 * [`race`](handlers.md#race) – Race a number of handlers. First one to provide a response wins.
 * [`sequence`](handlers.md#sequence) – Shortcut for creating a sub-router.
-* [`toCache`](handlers.md#toCache) – Add the response to a cache (unless it came from the cache).
-* [`updateCache`](handlers.md#updateCache) – Add the response to a cache. If it came from the cache, fetch a fresh copy instead.
+* [`toCache`](handlers.md#tocache) – Add the response to a cache (unless it came from the cache).
+* [`updateCache`](handlers.md#updatecache) – Add the response to a cache. If it came from the cache, fetch a fresh copy instead.
 * [`wait`](handlers.md#wait) – Add an artificial delay. This is useful for creating timeouts.
 
 ### Writing your own handler
@@ -101,13 +101,13 @@ router.get(conditionalHandler(data => {
 
 Here are all the types:
 
-* [`requestHandler`](handlers.md#requestHandler) – Called if a response hasn't been provided yet. Can return a response.
-* [`responseHandler`](handlers.md#responseHandler) – Called if a response *has* been provided. Can return a different response.
-* [`anyHandler`](handlers.md#anyHandler) – Called whether a response has been provided or not. Can return a response.
-* [`responseWaitUntilHandler`](handlers.md#responseWaitUntilHandler) – Called if a response has been provided. Runs asynchronously. Useful for doing something with the response such as caching.
-* [`waitUntilHandler`](handlers.md#waitUntilHandler) – Called whether a response has been provided or not. Runs asynchronously. Useful for doing bookkeeping & clean-up work.
-* [`conditionalHandler`](handlers.md#conditionalHandler) – Skips subsequent handlers in the sequence if it returns false.
-* [`errorHandler`](handlers.md#errorHandler) – Called if a previous handler threw an error or rejected.
+* [`requestHandler`](handlers.md#requesthandler) – Called if a response hasn't been provided yet. Can return a response.
+* [`responseHandler`](handlers.md#responsehandler) – Called if a response *has* been provided. Can return a different response.
+* [`anyHandler`](handlers.md#anyhandler) – Called whether a response has been provided or not. Can return a response.
+* [`responseWaitUntilHandler`](handlers.md#responsewaituntilhandler) – Called if a response has been provided. Runs asynchronously. Useful for doing something with the response such as caching.
+* [`waitUntilHandler`](handlers.md#waituntilhandler) – Called whether a response has been provided or not. Runs asynchronously. Useful for doing bookkeeping & clean-up work.
+* [`conditionalHandler`](handlers.md#conditionalhandler) – Skips subsequent handlers in the sequence if it returns false.
+* [`errorHandler`](handlers.md#errorhandler) – Called if a previous handler threw an error or rejected.
 
 ## API
 
@@ -127,7 +127,7 @@ router.get(urlPattern, ...items);
 router.get(...items);
 ```
 
-* `urlPattern`: Becomes a conditional handler using [`ifUrl`](handlers.md#ifUrl).
+* `urlPattern`: Becomes a conditional handler using [`ifUrl`](handlers.md#ifurl).
 * `items`: One or more handlers or sub-routers.
 
 `any` handles requests of all HTTP methods, whereas `get` etc handle requests of specific HTTP methods.
@@ -158,7 +158,7 @@ Process a fetch event and return a response.
 const response = await router.handle(data);
 ```
 
-* `data` - a [`FetchEvent`](https://developer.mozilla.org/en-US/docs/Web/API/FetchEvent) or [`FetchData`](#FetchData) object.
+* `data` - a [`FetchEvent`](https://developer.mozilla.org/en-US/docs/Web/API/FetchEvent) or [`FetchData`](#fetchdata) object.
 
 This is useful if you need to add your own fetch event logic around the router:
 
@@ -190,7 +190,7 @@ But also:
 * `url`: A parsed version of request's URL.
 * `error`: The error thrown by a previous handler.
 * `response`: The response provided by a previous handler.
-* `params`: Params from the [URL match](handlers.md#isUrl).
+* `params`: Params from the [URL match](handlers.md#isurl).
 
 ## Prebuilt version
 

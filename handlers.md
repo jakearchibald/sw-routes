@@ -167,7 +167,7 @@ router.all(
 
 ## `toCache`
 
-Add the response to a cache. If the response was fetched from a cache (eg via [`fromCache`](#fromCache)), it won't re-add it to the cache.
+Add the response to a cache. If the response was fetched from a cache (eg via [`fromCache`](#fromcache)), it won't re-add it to the cache.
 
 ```js
 toCache(cacheName);
@@ -223,7 +223,7 @@ router.get(conditionalHandler(fetchData => {
 }), fromNetwork());
 ```
 
-`sw-routers/handler-types` exposes the following handler types, each takes a callback that receives [`FetchData`](README.md#FetchData).
+`sw-routers/handler-types` exposes the following handler types, each takes a callback that receives [`FetchData`](README.md#fetchdata).
 
 ## `requestHandler`
 
@@ -324,6 +324,8 @@ router.get(waitUntilHandler(async () => {
   );
 }));
 ```
+
+**Remember to return a promise for async actions**, these will be used to keep the service worker awake.
 
 ## `conditionalHandler`
 
