@@ -107,7 +107,7 @@ Here are all the types:
 * [`responseWaitUntilHandler`](handlers.md#responsewaituntilhandler) – Called if a response has been provided. Runs asynchronously. Useful for doing something with the response such as caching.
 * [`waitUntilHandler`](handlers.md#waituntilhandler) – Called whether a response has been provided or not. Runs asynchronously. Useful for doing bookkeeping & clean-up work.
 * [`conditionalHandler`](handlers.md#conditionalhandler) – Skips subsequent handlers in the sequence if it returns false.
-* [`errorHandler`](handlers.md#errorhandler) – Called if a previous handler threw an error or rejected.
+* [`errorHandler`](handlers.md#errorhandler) – Called if a previous handler threw an error or rejected. Can return a response.
 
 ## API
 
@@ -118,7 +118,7 @@ import Router from 'sw-routes';
 const router = new Router();
 ```
 
-#### `router.any/get/post/put/delete`
+#### `router.all/get/post/put/delete`
 
 Create and add a sub-router with handlers.
 
@@ -130,7 +130,7 @@ router.get(...items);
 * `urlPattern`: Becomes a conditional handler using [`ifUrl`](handlers.md#ifurl).
 * `items`: One or more handlers or sub-routers.
 
-`any` handles requests of all HTTP methods, whereas `get` etc handle requests of specific HTTP methods.
+`all` handles requests of all HTTP methods, whereas `get` etc handle requests of specific HTTP methods.
 
 #### `router.add`
 
