@@ -10,14 +10,14 @@
   "author": "Jake Archibald",
   "license": "ISC",
   "dependencies": {
-    "path-to-regexp": "^1.7.0",
-    "rollup-plugin-node-resolve": "^3.0.0"
+    "path-to-regexp": "^1.7.0"
   },
   "devDependencies": {
     "del-cli": "^1.1.0",
     "rollup": "^0.45.2",
     "rollup-plugin-babili": "^3.1.0",
     "rollup-plugin-commonjs": "^8.1.0",
+    "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-watch": "^4.3.1",
     "typescript": "^2.4.2"
   }
