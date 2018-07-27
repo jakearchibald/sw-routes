@@ -5,6 +5,6 @@ import { RequestHandler } from '../handler-types';
  * @param options
  * @param options.timeout Network timeout in milliseconds
  */
-export default function fromNetwork({timeout}?: {
+export default function fromNetwork({ timeout }?: {
     timeout?: number;
 }): RequestHandler;
