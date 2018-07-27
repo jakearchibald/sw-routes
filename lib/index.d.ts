@@ -10,15 +10,15 @@ export declare class FetchData {
     /**
      * Error thrown by previous handler.
      */
-    error: Error | null;
+    error?: Error;
     /**
      * Response provided by previous handler.
      */
-    response: Response | null;
+    response?: Response;
     /**
      * Params added by ifUrl.
      */
-    params: {
+    params?: {
         [x: number]: string;
         [x: string]: string;
     };
@@ -61,7 +61,7 @@ declare class Router {
      *
      * This allows you to get a result from this router without having it take over your whole fetch event.
      */
-    handle(fetchData: (FetchEvent | FetchData)): Promise<Response | null>;
+    handle(fetchData: (FetchEvent | FetchData)): Promise<Response | undefined>;
     /**
      * Add a fetch listener and use this router to generate the response.
      */

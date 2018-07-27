@@ -17,15 +17,15 @@ export class FetchData {
   /**
    * Error thrown by previous handler.
    */
-  error: Error | null;
+  error?: Error;
   /**
    * Response provided by previous handler.
    */
-  response: Response | null;
+  response?: Response;
   /**
    * Params added by ifUrl.
    */
-  params: {
+  params?: {
     [x: number]: string;
     [x: string]: string;
   }
@@ -124,7 +124,7 @@ class Router {
         // Handle nested routers
         if (handler instanceof Router) {
           fetchData.response = (await handler.handle(fetchData)) || fetchData.response;
-          fetchData.error = null;
+          fetchData.error = undefined;
           continue;
         }
 
@@ -139,7 +139,7 @@ class Router {
             break;
           case 'request':
             if (fetchData.response || fetchData.error) continue;
-            fetchData.response = await handler.func(fetchData) || null;
+            fetchData.response = await handler.func(fetchData) || undefined;
             break;
           case 'response':
             if (fetchData.error || !fetchData.response) continue;
@@ -148,7 +148,7 @@ class Router {
           case 'error':
             if (!fetchData.error) continue;
             fetchData.response = (await handler.func(<FetchDataWithError>fetchData)) || fetchData.response;
-            fetchData.error = null;
+            fetchData.error = undefined;
             break;
         }
       }

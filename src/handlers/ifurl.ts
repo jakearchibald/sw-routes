@@ -30,7 +30,7 @@ export default function ifUrl(toMatch: string|RegExp) {
     if (!results) return false;
     if (!fetchResults.params) fetchResults.params = {};
     results.slice(1).forEach((result, i) => {
-      fetchResults.params[keys[i].name] = result;
+      fetchResults.params![keys[i].name] = result;
     });
     return true;
   });
